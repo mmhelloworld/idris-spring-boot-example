@@ -1,0 +1,60 @@
+buildscript {
+    ext {
+        springBootVersion = '2.0.5.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+repositories {
+    mavenCentral()
+}
+
+def ipkg = fileTree(dir: "${projectDir}/src/main/idris", include: "*.ipkg").singleFile.getName()
+
+task idrisBuild(type: Exec) {
+    workingDir "${projectDir}/src/main/idris"
+
+    executable "idris"
+    args = ["--install", ipkg]
+
+    inputs.files(fileTree("${projectDir}/src/main/idris"))
+    outputs.files(fileTree(dir: "${projectDir}/src/main/idris", include: "**/*.ibc"))
+}
+
+
+task idrisClean(type: Exec) {
+    workingDir "${projectDir}/src/main/idris"
+
+    executable "idris"
+    args = ["--clean", ipkg]
+
+    inputs.files(fileTree(dir: "${projectDir}/src/main/idris", include: "**/*.ibc"))
+}
+
+clean.dependsOn('idrisClean')
+build.dependsOn('idrisBuild')
+bootJar.dependsOn('idrisBuild')
+
+sourceSets.main.resources.srcDirs += [ "${projectDir}/build/classes" ]
+sourceSets.main.resources.includes = [ "**/*" ]
+
+springBoot {
+    mainClassName = "hello.TodoApplication"
+}
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile files("${System.env.IDRIS_JVM_HOME}/idris-jvm-runtime.jar")
+    testCompile("junit:junit")
+}
