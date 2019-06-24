@@ -1,10 +1,8 @@
 package idrisspringbootexample
 
-pkgs = contrib, idrisjvmffi, idrisjackson, idrisspringboot
+pkgs = contrib, idrisjvmffi, idrisspringboot
 
-modules = Mmhelloworld.IdrisSpringBootExample.Todo,
-          Mmhelloworld.IdrisSpringBootExample.TodoSerializer,
-          Main
+modules = Io.Github.Mmhelloworld.SpringBoot, Main
 
 opts = "--portable-codegen jvm -o ../../../build/classes"
 

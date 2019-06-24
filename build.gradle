@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        springBootVersion = '2.0.5.RELEASE'
+        springBootVersion = '2.1.5.RELEASE'
     }
     repositories {
         mavenCentral()
@@ -42,6 +42,11 @@ task idrisClean(type: Exec) {
     inputs.files(fileTree(dir: "${projectDir}/src/main/idris", include: "**/*.ibc"))
 }
 
+task idrisJvmImport(type: JavaExec) {
+    main = 'io.github.mmhelloworld.idrisjvm.runtime.ffi.TypeProvider'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
 clean.dependsOn('idrisClean')
 build.dependsOn('idrisBuild')
 bootJar.dependsOn('idrisBuild')
@@ -50,11 +55,11 @@ sourceSets.main.resources.srcDirs += [ "${projectDir}/build/classes" ]
 sourceSets.main.resources.includes = [ "**/*" ]
 
 springBoot {
-    mainClassName = "hello.TodoApplication"
+    mainClassName = "main.IdrisSpringMain"
 }
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.boot:spring-boot-starter-webflux")
     compile files("${System.env.IDRIS_JVM_HOME}/idris-jvm-runtime.jar")
     testCompile("junit:junit")
 }
