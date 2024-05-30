@@ -1,0 +1,8 @@
+package idrisspringbootexample
+
+depends = contrib
+
+sourcedir = "src/main/idris"
+
+main = Mmhelloworld.IdrisSpringBootExample.Main
+executable = idrisspringbootexample
